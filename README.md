@@ -14,16 +14,16 @@ Dan Yaw @DanYaw
 
 The following resources were used during the presentation.
 
-#### Survey123 and Selenium - Unit Testing Survey123 Web Forms
+### Survey123 and Selenium - Unit Testing Survey123 Web Forms
 
-[Survey123 and Selenium - Unit Testing Survey123 Web Forms]([http](https://www.arcgis.com/home/item.html?id=a5dbaf2025cd46b4b9fb04f8b07a3861)
+[Python Automating Survey123 Forms](https://www.arcgis.com/home/item.html?id=a5dbaf2025cd46b4b9fb04f8b07a3861)
 
 
-#### Email Notifications for Errors in ArcGIS Notebooks
+### Email Notifications for Errors in ArcGIS Notebooks
 
 [ArcGIS Notebook Error Emailer](https://www.arcgis.com/home/item.html?id=15bc5935089646f19ade59bf4e2044f4)
 
-#### Item Dependency Diagramming
+### Item Dependency Diagramming
 
 [Item Dependency Diagramming](https://www.arcgis.com/home/item.html?id=15848d7bd43b4275b629c7af7cf56b8a)
 
