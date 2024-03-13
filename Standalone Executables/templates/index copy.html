@@ -1,0 +1,76 @@
+{% from 'bootstrap5/form.html' import render_field %} {% extends "base.html" %}
+{% block head %}
+<link
+  href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+  rel="stylesheet"
+/>
+{% endblock %} {% block title %} Web GIS Content Search {% endblock %} {% block
+content %}
+<div class="container pt-3 pb-3">
+  <div class="row justify-content-center align-middle">
+    <div class="col">
+      <div>
+        <div class="text-center">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseSearch"
+            aria-expanded="false"
+            aria-controls="collapseSearch"
+          >
+            Refine Search
+          </button>
+        </div>
+        <div class="collapse" id="collapseSearch">
+          <form method="post">
+            {{ search_form.csrf_token() }} {{ render_field(search_form.owner) }}
+            {{ render_field(search_form.group) }} {{
+            render_field(search_form.tag) }} {{
+            render_field(search_form.content_status) }} {{
+            render_field(search_form.created_from, class='datepicker') }} {{
+            render_field(search_form.created_to) }} {{
+            render_field(search_form.modified_from) }} {{
+            render_field(search_form.modified_to) }} {{
+            render_field(search_form.output_path) }} {{
+            render_field(search_form.submit) }}
+          </form>
+        </div>
+
+        <div id="table"></div>
+      </div>
+      <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+      <script>
+        function searchQuery(query_string) {
+          return query_string
+        }
+        new gridjs.Grid({
+          columns: [
+            { id: "id", name: "Item ID" },
+            { id: "title", name: "Title" },
+            { id: "description", name: "Description"},
+            { id: "created", name: "Created" },
+            { id: "modified", name: "Modified" },
+            { id: "viewed", name: "Viewed"},
+            { id: "owner", name: "Owner"},
+            { id: "tags", name: "Tags" },
+            { id: "content_status", name: "Status" },
+            { id: "protected", name: "Protected"},
+            { id: "groupDesignations", name: "Groups" },
+            { id: "homepage", name: "Hyperlink" },
+
+          ],
+          server: {
+            url: searchQuery({{query_string|tojson}}),
+            then: (results) => results.data,
+          },
+          search: true,
+          sort: true,
+          pagination: true,
+          resizable: true,
+        }).render(document.getElementById("table"));
+      </script>
+    </div>
+  </div>
+</div>
+{% endblock %}

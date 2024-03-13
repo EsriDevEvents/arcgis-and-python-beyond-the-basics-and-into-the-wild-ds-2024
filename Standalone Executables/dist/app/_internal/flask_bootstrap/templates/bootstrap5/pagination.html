@@ -1,0 +1,7 @@
+{% extends 'base/pagination.html' %}
+
+{% macro get_current_page(page) %}
+<li class="page-item active" aria-current="page">
+    <a class="page-link" href="#">{{ page }}</a>
+</li>
+{% endmacro %}

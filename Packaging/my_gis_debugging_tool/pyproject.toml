@@ -1,0 +1,31 @@
+[project]
+name = "my-gis-debugging-tool"
+version = "2024.0.0"
+dependencies = [
+  "arcgis",
+]
+requires-python = ">=3.8"
+authors = [
+  {name = "A. GeoGeek", email = "gis-is-fun@example.com"},
+]
+maintainers = [
+  {name = "A. GeoGeek", email = "gis-is-fun@example.com"},
+]
+description = "Print statments to assist in debugging GIS scripts!"
+readme = "README.md"
+keywords = ["gis", "debug"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+
+[project.urls]
+Homepage = "https://example.com"
+Documentation = "https://readthedocs.org"
+Repository = "https://github.com/me/spam.git"
+"Bug Tracker" = "https://github.com/me/spam/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+[scripts]
+my_gis_debugging_tool = "my_gis_debugging_tool:request_debugging"

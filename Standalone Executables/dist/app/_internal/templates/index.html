@@ -1,0 +1,110 @@
+{% from 'bootstrap5/form.html' import render_field %} {% extends "base.html" %}
+{% block head %} {% endblock %} {% block title %} Web GIS Content Search {%
+endblock %} {% block styles %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.0/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/r-3.0.0/datatables.min.css" rel="stylesheet">
+
+{% endblock %} {% block content %}
+
+<div class="container pt-3 pb-3">
+  <div class="row justify-content-center align-middle">
+    <div class="col pb-3">
+      <div>
+        <div class="text-center">
+          <button
+            class="btn btn-primary"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseSearch"
+            aria-expanded="false"
+            aria-controls="collapseSearch"
+          >
+            Refine Search
+          </button>
+        </div>
+        <div class="collapse" id="collapseSearch">
+          <form method="post">
+            {{ search_form.csrf_token() }} {{ render_field(search_form.owner) }}
+            {{ render_field(search_form.group) }} {{
+            render_field(search_form.tag) }} {{
+            render_field(search_form.content_status) }} {{
+            render_field(search_form.created_from, class='datepicker') }} {{
+            render_field(search_form.created_to) }} {{
+            render_field(search_form.modified_from) }} {{
+            render_field(search_form.modified_to) }} {{
+            render_field(search_form.output_path) }} {{
+            render_field(search_form.submit) }}
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <table id="data" class="table table-striped pt-3" style="width:100%">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Owner</th>
+          <th>Created</th>
+          <th>Modified</th>
+          <th>Tags</th>
+          <th>Type Keywords</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    {% endblock %} {% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.0.0/b-3.0.0/b-colvis-3.0.0/b-html5-3.0.0/b-print-3.0.0/r-3.0.0/datatables.min.js"></script>
+
+    <script>
+      function searchQuery(query_string) {
+        return query_string
+      }
+      $(document).ready(function () {
+        $("#data").DataTable({
+          ajax: searchQuery({{query_string|tojson}}),
+          lengthMenu: [
+            [10, 25, 50, -1],
+            [10, 25, 50, "All"],
+          ],
+          dom: "Bfrtip",
+          colReorder: true,
+          stateSave: true,
+          responsive: true,
+          columns: [
+            { data: 'id', orderable: true, searchable: true },
+            { data: 'title', orderable: true, searchable: true },
+            { data: 'type', orderable: true, searchable: true },
+            { data: 'owner', orderable: true, searchable: true },
+            { data: 'created', orderable: true, searchable: true },
+            { data: 'modified', orderable: true, searchable: true, visable: false},
+            { data: 'tags', orderable: true, searchable: true, visable: false },
+            { data: 'typeKeywords', orderable: true, searchable: true, visable: false },
+          ],
+          buttons: [
+            {
+              extend: "colvis",
+              collectionLayout: "fixed columns",
+              collectionTitle: "Select Columns to View",
+              text: "Columns",
+            },
+            {
+              extend: "pdfHtml5",
+              messageTop: "Created by Enterprise Toolkit",
+            },
+            {
+              extend: "excelHtml5",
+              autoFilter: true,
+            },
+          ],
+        });
+      });
+    </script>
+    {% endblock %}
+  </div>
+</div>

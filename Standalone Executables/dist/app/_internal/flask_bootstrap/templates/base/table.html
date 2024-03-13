@@ -1,0 +1,171 @@
+{% from 'base/utils.html' import render_icon, arg_url_for %}
+
+
+{% macro build_url(record, endpoint, url_tuples, model, pk_field) %}
+    {% if model != None %}
+        {% set record = model.query.get(record[pk_field]) %}
+    {% endif %}
+    {% with url_params = {} -%}
+        {%- do url_params.update(request.view_args if not endpoint else {}),
+            url_params.update(request.args if not endpoint else {}) -%}
+            {% for url_parameter, db_field in url_tuples %}
+                {% if db_field.startswith(':') and '.' in db_field %}
+                    {%- set db_field = db_field[1:].split('.') -%}
+                    {%- do url_params.update({url_parameter: record[db_field[0]][db_field[1]]}) -%}
+                {% elif db_field.startswith(':') %}
+                    {%- set db_field = db_field[1:] -%}
+                    {%- do url_params.update({url_parameter: record[db_field]}) -%}
+                {% else %}
+                    {%- do url_params.update({url_parameter: db_field}) -%}
+                {% endif %}
+            {% endfor %}
+        {{ arg_url_for(endpoint, url_params) }}
+    {%- endwith %}
+{%- endmacro %}
+
+{% macro render_table(data,
+                      titles=None,
+                      primary_key='id',
+                      primary_key_title='#',
+                      caption=None,
+                      table_classes=None,
+                      header_classes=None,
+                      responsive=False,
+                      responsive_class='table-responsive',
+                      safe_columns=None,
+                      urlize_columns=None,
+                      model=None,
+                      show_actions=False,
+                      actions_title='Actions',
+                      custom_actions=None,
+                      view_url=None,
+                      edit_url=None,
+                      delete_url=None,
+                      new_url=None,
+                      action_pk_placeholder=':id') %}
+{% if not titles %}
+    {% set titles = get_table_titles(data, primary_key, primary_key_title) %}
+{% endif %}
+{% if responsive %}
+    <div class="{{ responsive_class }}">
+{% endif %}
+<table class="table{% if table_classes %}{{ ' ' + table_classes }}{% endif %}">
+    {% if caption %}
+    <caption>{{ caption }}</caption>
+    {% endif %}
+    <thead{% if header_classes %} class="{{ header_classes }}"{% endif %}>
+    <tr>
+    {% for title in titles %}
+        <th scope="col">{{ title[1] }}</th>
+    {% endfor %}
+    {% if show_actions %}
+        <th scope="col">{{ actions_title }}
+        {% if new_url %}
+            <a class="action-icon text-decoration-none"
+                {% if new_url.startswith('/') %}
+                href="{{ new_url }}"
+                {% else %}
+                href="{{ url_for(new_url) }}"
+                {% endif %}
+                title="{{ config['BOOTSTRAP_TABLE_NEW_TITLE'] }}">
+                {{ render_icon('plus-circle-fill') }}
+            </a>
+        {% endif %}
+        </th>
+    {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in data %}
+    <tr>
+        {% for title in titles %}
+        {% set key = title[0] %}
+        {% set value = row[key] %}
+        {%- if key == primary_key -%}
+            <th scope="row">
+        {%- else -%}
+            <td>
+        {%- endif -%}
+        {%- if value is string -%}
+            {%- if safe_columns and key in safe_columns -%}
+                {{ value|safe }}
+            {%- else -%}
+                {%- if urlize_columns and key in urlize_columns -%}
+                    {{ value|urlize }}
+                {%- else -%}
+                    {{ value }}
+                {%- endif -%}
+            {%- endif -%}
+        {%- elif value.__class__.__base__.__name__ == 'Enum' -%}
+            {{ value.value }}
+        {%- else -%}
+            {{ value }}
+        {%- endif -%}
+        {%- if key == primary_key -%}
+            </th>
+        {%- else -%}
+            </td>
+        {%- endif -%}
+        {% endfor %}
+        {% if show_actions %}
+        <td>
+            {% if custom_actions %}
+            {% for (action_name, action_icon, action_url) in custom_actions %}
+                <a class="action-icon text-decoration-none"
+                   {% if action_url is string %}
+                    href="{{ action_url }}"
+                   {% else %}
+                    href="{{ build_url(row, action_url[0], action_url[1], model, primary_key) | trim }}"
+                   {% endif %}
+                    title="{{ action_name }}">{{ render_icon(action_icon) }}</a>
+            {% endfor %}
+            {% endif %}
+            {% if view_url %}
+                <a class="action-icon text-decoration-none"
+                   {% if view_url is string %}
+                    href="{{ view_url }}"
+                   {% else %}
+                    href="{{ build_url(row, view_url[0], view_url[1], model, primary_key) | trim }}"
+                   {% endif %}
+                    title="{{ config['BOOTSTRAP_TABLE_VIEW_TITLE'] }}">
+                    {{ render_icon('eye-fill') }}
+                </a>
+            {% endif %}
+            {% if edit_url -%}
+                <a class="action-icon text-decoration-none"
+                   {% if edit_url is string %}
+                    href="{{ edit_url }}"
+                   {% else %}
+                    href="{{ build_url(row, edit_url[0], edit_url[1], model, primary_key) | trim }}"
+                   {% endif %}
+                    title="{{ config['BOOTSTRAP_TABLE_EDIT_TITLE'] }}">
+                    {{ render_icon('pencil-fill') }}
+                </a>
+            {%- endif %}
+            {% if delete_url %}
+            <form class="d-inline"
+                  {% if delete_url is string %}
+                   action="{{ delete_url }}"
+                  {% else %}
+                   action="{{ build_url(row, delete_url[0], delete_url[1], model, primary_key) | trim }}"
+                  {% endif %}
+                   method="post">
+                  {% if csrf_token is undefined %}
+                  {{ raise('You have to enable the CSRFProtect extension from Flask-WTF to use delete_url, see the docs for more details (https://bootstrap-flask.readthedocs.io/en/stable/macros.html#render-table).') }}
+                  {% endif %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" class="btn btn-link p-0 border-0 align-baseline" title="{{ config['BOOTSTRAP_TABLE_DELETE_TITLE'] }}">
+                    {{ render_icon('trash-fill') }}
+                </button>
+            </form>
+            {% endif %}
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if responsive %}
+    </div>
+{% endif %}
+{% endmacro %}

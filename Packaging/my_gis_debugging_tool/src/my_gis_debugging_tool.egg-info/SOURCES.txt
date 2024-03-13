@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+src/my_gis_debugging_tool/__init__.py
+src/my_gis_debugging_tool/_global_settings.py
+src/my_gis_debugging_tool/hooks.py
+src/my_gis_debugging_tool/request_debugging.py
+src/my_gis_debugging_tool.egg-info/PKG-INFO
+src/my_gis_debugging_tool.egg-info/SOURCES.txt
+src/my_gis_debugging_tool.egg-info/dependency_links.txt
+src/my_gis_debugging_tool.egg-info/requires.txt
+src/my_gis_debugging_tool.egg-info/top_level.txt

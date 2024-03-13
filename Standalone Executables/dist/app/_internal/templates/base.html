@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{ bootstrap.load_css() }} {% block head %} {% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  {% block styles %}{% endblock %} 
+  <body>
+    <nav class="navbar navbar bg-primary navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Web GIS Search</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          {% if current_portal %}
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="navbar-nav ms-auto">
+              <a class="nav-link" href="{{ current_portal }}">{{ current_portal }}</a>
+            </div>            
+            <div class="navbar-nav ms-auto">
+              <a class="nav-link" href="/logout">Log Out</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+    {% block content %}{% endblock %} {{ bootstrap.load_js() }}
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

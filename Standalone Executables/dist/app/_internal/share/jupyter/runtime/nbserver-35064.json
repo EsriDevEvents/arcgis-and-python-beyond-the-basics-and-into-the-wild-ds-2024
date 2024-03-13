@@ -1,0 +1,12 @@
+{
+  "base_url": "/",
+  "hostname": "localhost",
+  "notebook_dir": "C:\\Users\\dan11332\\Documents\\ArcGIS\\Projects\\MyProject",
+  "password": false,
+  "pid": 35064,
+  "port": 8778,
+  "secure": false,
+  "sock": "",
+  "token": "",
+  "url": "http://localhost:8778/"
+}

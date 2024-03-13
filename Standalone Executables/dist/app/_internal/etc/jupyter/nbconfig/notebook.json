@@ -1,0 +1,5 @@
+{
+  "load_extensions": {
+    "repr_style/main": true
+  }
+}
